@@ -19,6 +19,7 @@ IF NOT EXIST vendor (
 REM --- Verificar migraciones ---
 echo Ejecutando migraciones...
 php artisan migrate:fresh --seed
+php artisan migrate --path=database/migrations_ucsc --database=pgsql_ucsc
 
 REM --- Iniciar el servidor Laravel ---
 echo Iniciando servidor local...
