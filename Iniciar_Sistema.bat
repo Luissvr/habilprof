@@ -18,7 +18,9 @@ IF NOT EXIST vendor (
 
 REM --- Verificar migraciones ---
 echo Ejecutando migraciones...
+::Inicializar migraciones y crear tablas de HabilProf
 php artisan migrate:fresh --seed
+::Migracion de modulo fantasma
 php artisan migrate --path=database/migrations_ucsc --database=pgsql_ucsc
 
 REM --- Iniciar el servidor Laravel ---
