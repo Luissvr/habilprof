@@ -1,0 +1,179 @@
+
+body {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.contenedor{
+    max-width: 600px;
+    margin: 40px auto;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px;
+    overflow: hidden;
+}
+
+.titulo{
+    text-align: center;
+}
+
+.titulo h1{
+    margin-bottom: 10px;
+}
+
+.titulo p{
+    margin-bottom: 10px;
+    border-bottom: 3px solid #ccc;
+    padding-bottom: 3px;
+    font-weight: bold;
+}
+
+.formulario {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap:15px;
+    font-size: 15px;
+}
+
+.formulario h2{
+    margin: 0 ;
+}
+.campo{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    
+}
+.campo label{
+    font-family: 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+    border-bottom: 1px solid #ccc;
+    font-weight: bold;
+    color: grey;
+}
+.campo input{
+    border: none;
+    box-shadow: 0 1px 2px;
+    border-radius: 5px;
+    width: 100%;
+    padding: 5px;
+    height: 25px;
+    font-family: 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+    font-size: 15px;
+}
+
+.campo select{
+    padding: 6px 8px;
+    font-size: 15px;
+    width: 190px;
+}
+
+.campo input:hover{
+    background-color: white;
+    border: 1px solid red;
+}
+.campo input:focus{
+    border: 2px solid red;
+    outline: none; 
+}
+
+.ruts {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+.semestre_ini {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.semestre_ini select {
+    padding: 6px 8px;
+    font-size: 15px;
+    width: 110px;
+}
+
+.tipo_habi{
+    display: flex;
+    justify-content: center;
+}
+
+.formulario button {
+    background-color: red;
+    margin: auto;
+    color: white;
+    width: 90%;
+    height: 50px;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+    font-weight: bold;
+}
+.formulario button:hover{
+    background-color: white;
+    border: 2px solid red;
+    color: black;
+}
+
+.lista_alumno,
+.lista_profesores {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 570px;
+    border: none;
+    box-shadow: 0 5px 25px;
+    background-color: white;
+    z-index: 10;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    
+}
+.item {
+    padding: 8px 12px;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+}
+
+.item:hover {
+    background-color: #f0f0f0;
+    border: 2px solid red;
+    border-radius: 5px;
+}
+.item.seleccionado {
+    background-color: #0077b6;
+    color: white;
+    border: 2px solid #0077b6;
+    border-radius: 5px;
+}
+
+#desc_hab, #desc_pr{
+    width: 97.5%;
+    height: 60px; 
+    padding: 10px 12px;
+    font-size: 15px;
+}
+
+.proyecto,
+.practica {
+    display: none;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.mostrar {
+    display: flex;
+}
+label.obligatorio::after {
+    content: " *";
+    color: red;
+    font-weight: bold;
+}

@@ -1,0 +1,115 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, Helvetica, sans-serif;
+
+}
+
+.logo{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 200px;
+    margin-bottom: 50px;
+}
+
+.logo img{
+    width: 200px;
+    height: auto;
+}
+
+.formulario{
+    position: absolute;
+    margin: 0 auto;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    background-color: white;
+    border-radius: 10px;
+    border: 1px solid black;
+    box-shadow: 0 0 15px;
+}
+.formulario h1{
+    color: rgb(77, 77, 77);
+    text-align: center;
+    padding: 0 0 20px 0;
+    border-bottom: 2px solid rgb(0, 0, 0);
+    border-radius: 30px;
+    outline: none;
+}
+.formulario form{
+    padding: 0 10px;
+    box-sizing: border-box;
+}
+
+form .usuario{ 
+    position: relative;
+    border-bottom: 1px solid rgb(165, 165, 165);
+    margin: 30px 0;
+}
+
+.usuario input{
+    width: 300px;
+    padding: 0 5px;
+    height: 30px;
+    font-size: 15px;
+    border: none;
+    background: none;
+    outline: none;
+}
+
+.usuario label{    
+    position: absolute;
+    top: 50%;
+    left: 3%;
+    color: rgb(97, 97, 97);
+    transform: translateY(-50%);
+    font-size: 15px;
+    pointer-events: none;
+    transition: 0.3s;
+}
+.usuario input:focus ~ label,
+.usuario input:valid ~ label {
+  top: -10px;
+  font-size: 13px;
+  color: #3498db;
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+.olvidar {
+    text-align: right;
+    margin-top: 20px;
+}
+.olvidar a{
+    color: black;
+    font-size: 15px;
+    text-decoration:underline;
+}
+.olvidar a:hover {
+  color: red;
+  text-decoration: underline;
+}
+
+input[type="submit"] {
+    display: block;
+    margin: 40px;
+    width: 80%;
+    padding: 15px;
+    font-size: 15px;
+    background-color: red;
+    color: white;
+    border-radius: 5px;
+    border: 1.9px solid black;
+    box-shadow: 0 0 10px black;
+}
+
+input[type="submit"]:hover{
+    background-color: white;
+    color: black;
+    border: 1px solid red;
+}
