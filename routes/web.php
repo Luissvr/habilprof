@@ -4,7 +4,6 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Http\Controllers\clogin\loginController;
-use App\Http\Controllers\cdashboard\AlumnoController;
 use App\Http\Controllers\cIngreso\ingresoController;
 
 // Página principal (login)
@@ -38,14 +37,38 @@ Route::get('/buscar-alumno', function (Request $request) {
     return response()->json($alumnos);
 });
 
-Route::get('/buscar-profesor', function (Request $request) {
+// Profesores SOLO del DINF (guía, tutor y comisión)
+Route::get('/buscar-profesor-dinf', function (Request $request) {
     $rut = $request->query('rut');
 
-    $query = DB::table('profesor')->select('rut_profesor', 'nombre_profesor');
+    $query = DB::table('profesor')
+        ->select('rut_profesor', 'nombre_profesor')
+        ->where('dinf', true); // filtro DINF
 
     if ($rut) {
-        $query->where('rut_profesor', 'ILIKE', "%{$rut}%");
-        $query->where('nombre_profesor', 'ILIKE', "%{$rut}%");
+        $query->where(function($q) use ($rut) {
+            $q->where('rut_profesor', 'ILIKE', "%{$rut}%")
+              ->orWhere('nombre_profesor', 'ILIKE', "%{$rut}%");
+        });
+    }
+
+    $profesores = $query->limit(50)->get();
+
+    return response()->json($profesores);
+});
+
+// Profesores de cualquier departamento (co-guía)
+Route::get('/buscar-profesor-todos', function (Request $request) {
+    $rut = $request->query('rut');
+
+    $query = DB::table('profesor')
+        ->select('rut_profesor', 'nombre_profesor');
+
+    if ($rut) {
+        $query->where(function($q) use ($rut) {
+            $q->where('rut_profesor', 'ILIKE', "%{$rut}%")
+              ->orWhere('nombre_profesor', 'ILIKE', "%{$rut}%");
+        });
     }
 
     $profesores = $query->limit(50)->get();
