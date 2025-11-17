@@ -20,18 +20,18 @@ class SincronizarDatos extends Command
      * --- REGLAS DE VALIDACIÓN (R1.1 a R1.5) ---
      * Definimos las reglas aquí para tenerlas ordenadas.
      */
-    private $alumnoRules = [
+    private $Restricciones_alumno = [
         'rut_alumno' => ['required', 'string', 'min:8', 'max:9', 'regex:/^\d{7,8}[0-9K]$/i'], // R1.2 (sin puntos ni guion)
         'nombre_alumno' => ['required', 'string', 'min:4', 'max:50'], // R1.1
     ];
 
-    private $profesorRules = [
+    private $Restricciones_profesor = [
         'rut_profesor' => ['required', 'string', 'min:8', 'max:9', 'regex:/^\d{7,8}[0-9K]$/i'], // R1.4
         'nombre_profesor' => ['required', 'string', 'min:4', 'max:50'], // R1.3
         'es_dinf' => ['required', 'boolean'], // Asegura que el dato 'es_dinf' exista y sea 0 o 1
     ];
 
-    private $notaRules = [
+    private $Restricciones_Notas = [
         'rut_alumno' => ['required', 'string', 'min:8', 'max:9', 'regex:/^\d{7,8}[0-9K]$/i'],
         'nota_final' => ['required', 'numeric', 'between:1.0,7.0'], // R1.5
     ];
@@ -74,7 +74,7 @@ class SincronizarDatos extends Command
             $externoData = (array) $externo;
             
             // 2. Validamos los datos contra nuestras reglas R1
-            $validator = Validator::make($externoData, $this->alumnoRules);
+            $validator = Validator::make($externoData, $this->Restricciones_alumno);
 
             // 3. Si los datos del fantasma son "basura" (no pasan R1), los saltamos.
             if ($validator->fails()) {
@@ -105,7 +105,7 @@ class SincronizarDatos extends Command
 
         foreach ($profesoresExternos as $externo) {
             $externoData = (array) $externo;
-            $validator = Validator::make($externoData, $this->profesorRules);
+            $validator = Validator::make($externoData, $this->Restricciones_profesor);
 
             if ($validator->fails()) {
                 Log::warning("Sincronización: Profesor externo con RUT {$externo->rut_profesor} tiene datos inválidos.", $validator->errors()->toArray());
@@ -136,7 +136,7 @@ class SincronizarDatos extends Command
             $externoData = (array) $externo;
             
             // Validamos la nota (R1.5)
-            $validator = Validator::make($externoData, $this->notaRules);
+            $validator = Validator::make($externoData, $this->Restricciones_Notas);
 
             if ($validator->fails()) {
                 Log::warning("Sincronización: Nota externa para RUT {$externo->rut_alumno} es inválida (ej. {$externo->nota_final}).", $validator->errors()->toArray());
