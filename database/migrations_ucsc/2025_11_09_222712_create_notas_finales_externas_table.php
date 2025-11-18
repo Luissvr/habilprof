@@ -15,7 +15,7 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('notas_finales_externas', function (Blueprint $table) {
+        Schema::connection('pgsql_ucsc')->create('notas_finales_externas', function (Blueprint $table) {
             
             // Llave primaria autoincremental.
             $table->id('id_nota'); 
@@ -38,6 +38,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('notas_finales_externas');
+        Schema::connection('pgsql_ucsc')->dropIfExists('notas_finales_externas');
     }
 };

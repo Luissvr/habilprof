@@ -20,10 +20,9 @@ class AdminSeeder extends Seeder
         ]);
 
         // Añadir más credenciales de admins:
-        /*Admin::create([
-            'rut_admin' => '21069322', // O el RUT que quieras
-            'password' => Hash::make('clave1a') // R6.2: min 6, max 8, 1 letra, 1 num
+        Admin::create([
+            'rut_admin' => '21390315', // O el RUT que quieras
+            'password' => Hash::make('a234567') // R6.2: min 6, max 8, 1 letra, 1 num
         ]);
-        */
     }
 }

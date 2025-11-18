@@ -16,7 +16,6 @@ return new class extends Migration {
             $table->string('descripcion', 255)->nullable();
             $table->decimal('nota', 2, 1)->nullable();
             $table->date('fecha_registro_nota')->nullable();
-
             // FK hacia alumno.rut_alumno si existe en el esquema
             $table->foreign('rut_alumno')->references('rut_alumno')->on('alumno')->onDelete('cascade');
         });

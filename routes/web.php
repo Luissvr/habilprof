@@ -1,11 +1,14 @@
 <?php
 
+use App\Http\Controllers\listadoController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Http\Controllers\clogin\loginController;
-use App\Http\Controllers\cdashboard\AlumnoController;
 use App\Http\Controllers\cIngreso\ingresoController;
+use App\Http\Controllers\HabilitacionPanelController;
+use App\Models\Habilitacion;
+
 
 // Página principal (login)
 Route::get('/', [loginController::class, 'mostrarLogin'])->name('login.mostrar');
@@ -13,12 +16,25 @@ Route::get('/', [loginController::class, 'mostrarLogin'])->name('login.mostrar')
 // Validación del login
 Route::post('/login', [loginController::class, 'validarLogin'])->name('login.validar');
 
+// Panel de listado de habilitaciones
+Route::get('/habilitaciones', [listadoController::class, 'dashboard'])
+    ->name('habilitaciones.dashboard');
+
+    
 Route::get('/dashboard', function () {
-    return view('dashboard.inicio');
+    // Traer todas las habilitaciones con sus relaciones
+    $habilitaciones = Habilitacion::with(['alumno', 'profesores'])
+        ->orderByDesc('id_habilitacion')
+        ->get();
+
+    // Pasar la variable a la vista
+    return view('dashboard.inicio', compact('habilitaciones'));
 })->middleware('auth:admin')->name('dashboard.inicio');
 
+
+// Ruta de redirección del antiguo archivo ingreso.blade.php
 Route::get('/ingreso', function () {
-    return view('funciones.ingreso');
+    return redirect()->route('dashboard.inicio');
 })->name('funciones.ingreso');
 
 // Obtener lista de alumnos
@@ -37,14 +53,19 @@ Route::get('/buscar-alumno', function (Request $request) {
     return response()->json($alumnos);
 });
 
-Route::get('/buscar-profesor', function (Request $request) {
+// Profesores SOLO del DINF (guía, tutor y comisión)
+Route::get('/buscar-profesor-dinf', function (Request $request) {
     $rut = $request->query('rut');
 
-    $query = DB::table('profesor')->select('rut_profesor', 'nombre_profesor');
+    $query = DB::table('profesor')
+        ->select('rut_profesor', 'nombre_profesor')
+        ->where('dinf', true); // filtro DINF
 
     if ($rut) {
-        $query->where('rut_profesor', 'ILIKE', "%{$rut}%");
-        $query->where('nombre_profesor', 'ILIKE', "%{$rut}%");
+        $query->where(function($q) use ($rut) {
+            $q->where('rut_profesor', 'ILIKE', "%{$rut}%")
+              ->orWhere('nombre_profesor', 'ILIKE', "%{$rut}%");
+        });
     }
 
     $profesores = $query->limit(50)->get();
@@ -52,5 +73,24 @@ Route::get('/buscar-profesor', function (Request $request) {
     return response()->json($profesores);
 });
 
-Route::post('/ingreso/habilitacion', [ingresoController::class, 'ingreso'])->name('habilitacion.ingreso');
+// Profesores de cualquier departamento (co-guía)
+Route::get('/buscar-profesor-todos', function (Request $request) {
+    $rut = $request->query('rut');
+
+    $query = DB::table('profesor')
+        ->select('rut_profesor', 'nombre_profesor');
+
+    if ($rut) {
+        $query->where(function($q) use ($rut) {
+            $q->where('rut_profesor', 'ILIKE', "%{$rut}%")
+              ->orWhere('nombre_profesor', 'ILIKE', "%{$rut}%");
+        });
+    }
+
+    $profesores = $query->limit(50)->get();
+
+    return response()->json($profesores);
+});
+
+Route::post('/dashboard/ingreso', [ingresoController::class, 'ingreso'])->name('habilitacion.ingreso');
 Route::post('/logout', [loginController::class, 'logout'])->name('logout');

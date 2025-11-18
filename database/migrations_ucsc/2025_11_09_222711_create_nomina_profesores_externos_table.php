@@ -15,7 +15,7 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('nomina_profesores_externos', function (Blueprint $table) {
+        Schema::connection('pgsql_ucsc')->create('nomina_profesores_externos', function (Blueprint $table) {
             
             // Llave primaria simple.
             $table->id();
@@ -36,6 +36,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('nomina_profesores_externos');
+        Schema::connection('pgsql_ucsc')->dropIfExists('nomina_profesores_externos');
     }
 };

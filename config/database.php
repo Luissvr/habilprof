@@ -83,6 +83,7 @@ return [
             ]) : [],
         ],
 
+        // PostgreSQL
         'pgsql' => [
             'driver' => 'pgsql',
             'url' => env('DB_URL'),
@@ -114,14 +115,15 @@ return [
             // 'trust_server_certificate' => env('DB_TRUST_SERVER_CERTIFICATE', 'false'),
         ],
 
+        // Conexión adicional para la base de datos UCSC (Módulo Fantasma)
         'pgsql_ucsc' => [
             'driver' => 'pgsql',
             'url' => env('DB2_URL'),
             'host' => env('DB2_HOST', '127.0.0.1'),
             'port' => env('DB2_PORT', '5432'),
-            'database' => env('DB2_DATABASE', 'BD_UCSC'),
+            'database' => env('DB2_DATABASE', 'Servidor_UCSC'),
             'username' => env('DB2_USERNAME', 'postgres'),
-            'password' => env('DB2_PASSWORD', '23092002'),
+            'password' => env('DB2_PASSWORD', 'Admin2025'),
             'charset' => env('DB2_CHARSET', 'utf8'),
             'prefix' => '',
             'prefix_indexes' => true,

@@ -4,7 +4,7 @@ namespace App\Http\Controllers\cIngreso;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreHabilitacionRequest; 
-// Importamos los modelos que vas a usar
+// Importamos los modelos a usar
 use App\Models\Habilitacion;
 use App\Models\Pring;
 use App\Models\Prinv;
@@ -41,7 +41,7 @@ class ingresoController extends Controller
             // 2. Crear habilitación (El "Jefe" trabajando)
             $habilitacion = Habilitacion::create([
                 'rut_alumno' => $validated['rut_al'],
-                'semestre_inicio' => $validated['anio_ini'] . '-' . $validated['sem_ini'], // Concatenamos
+                'semestre_inicio' => $validated['semestre_compuesto'], // Concatenamos
                 't_habilitacion' => $validated['tipo_hab'],
                 'descripcion' => $validated['descripcion_unificada'], // Usamos el campo preparado
             ]);
