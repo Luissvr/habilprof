@@ -28,11 +28,11 @@
             const sugerenciasDiv = document.getElementById('lista_alumno');
             
             inputRut.addEventListener('click', async () => {
-                const res = await fetch(`/buscar-alumno`);
-                const data = await res.json();
+                const res = await fetch(`/buscar-alumno`); // AL hacer click en el campo RUT, se lanza la busqueda de alumnos   
+                const data = await res.json(); //Devuelve la lista de alumnos en formato JSON
                 if (data.length > 0) {
                     sugerenciasDiv.style.display = "block";
-                    sugerenciasDiv.innerHTML = data.map(a => 
+                    sugerenciasDiv.innerHTML = data.map(a =>  // Con los datos seleccionados en la lista HTML se completan automáticamente los campos RUT y Nombre
                         `<div class="item" data-rut="${a.rut_alumno}" data-nombre="${a.nombre_alumno}">${a.rut_alumno} - ${a.nombre_alumno}</div>`
                     ).join('');
                 }
@@ -65,12 +65,12 @@
                 if (l.id !== idLista) l.style.display = "none";
             });
         
-            const res = await fetch('/buscar-profesor-dinf');
-            const data = await res.json();
+            const res = await fetch('/buscar-profesor-dinf'); // AL hacer click en el campo RUT, se lanza la busqueda de profesores del DINF
+            const data = await res.json(); //Devuelve la lista de profesores en formato JSON
 
             if (data.length > 0) {
                 sugerenciasDiv.style.display = "block";
-                sugerenciasDiv.innerHTML = data.map(a => 
+                sugerenciasDiv.innerHTML = data.map(a =>  // Con los datos seleccionados se completan automáticamente los campos RUT y Nombre
                     `<div class="item" data-rut="${a.rut_profesor}" data-nombre="${a.nombre_profesor}">
                     ${a.rut_profesor} - ${a.nombre_profesor}
                     </div>`
@@ -98,11 +98,11 @@
                     if (l.id !== idLista) l.style.display = "none";
                 });
                 
-                const res = await fetch(`/buscar-profesor-todos`);
-                const data = await res.json();
+                const res = await fetch(`/buscar-profesor-todos`); // AL hacer click en el campo RUT, se lanza la busqueda de todos los profesores registrados
+                const data = await res.json(); //Devuelve la lista de profesores en formato JSON
                 if (data.length > 0) {
                     sugerenciasDiv.style.display = "block";
-                    sugerenciasDiv.innerHTML = data.map(a => 
+                    sugerenciasDiv.innerHTML = data.map(a => // Con los datos seleccionados se completan automáticamente los campos RUT y Nombre
                         `<div class="item" data-rut="${a.rut_profesor}" data-nombre="${a.nombre_profesor}">${a.rut_profesor} - ${a.nombre_profesor}</div>`
                     ).join('');
                 }
