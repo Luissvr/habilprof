@@ -169,11 +169,11 @@ Dependiendo de las entradas, pueden aparecer:
 | Requisito | Archivo / ubicación aproximada |
 |-----------|--------------------------------|
 | R4 (descripción general de listados varios) | resources/views/dashboard/paneles/listado.blade.php "estructura completa del panel de listados." |
-| R1.4 | listado.blade.php "Linea 63 del archivo." |
-| R4.5/R4.15 | listado.blade.php "desde linea 21 a 31 del archivo" |
-| R4.16 / R4.16.1 | listado.blade.php "linea 33 del archivo" |
-| R4.16.1.1  | listado.blade.php "linea 44 del archivo" |
-| R4.16.1.1 / R4.16.1.2  | listado.blade.php "ciclo desde linea 151 Parcialmente representados en “Título / Descripción” y “Profesor Responsable”" |
-| R4.17  | listado.blade.php "lineas 59 y 60" |
-| R4.18 | listado.blade.php "Linea 77" |
+| R1.4 | resources/views/dashboard/paneles/listado.blade.php "Linea 63 del archivo." |
+| R4.5/R4.15 | resources/views/dashboard/paneles/listado.blade.php "desde linea 21 a 31 del archivo" |
+| R4.16 / R4.16.1 | resources/views/dashboard/paneles/listado.blade.php "linea 33 del archivo" |
+| R4.16.1.1  | resources/views/dashboard/paneles/listado.blade.php "linea 44 del archivo" |
+| R4.16.1.1 / R4.16.1.2  | resources/views/dashboard/paneles/listado.blade.php "ciclo desde linea 151 Parcialmente representados en “Título / Descripción” y “Profesor Responsable”" |
+| R4.17  | resources/views/dashboard/paneles/listado.blade.php "lineas 59 y 60" |
+| R4.18 | resources/views/dashboard/paneles/listado.blade.php "Linea 77" |
 
