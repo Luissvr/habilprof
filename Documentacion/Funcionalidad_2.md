@@ -547,3 +547,14 @@ Si todo es válido:
 El sistema confirma el registro y permite continuar ingresando nuevas habilitaciones.
 
 ---
+
+## 5. Definición de Rutas para F2 (Ingreso y Búsqueda)
+
+El módulo de ingreso utiliza rutas `POST` para el guardado y rutas `GET` (AJAX) para mostrar dinámicamente los campos de selección, mejorando la experiencia de usuario y cumpliendo con la carga de datos especificada.
+
+| Verbo | URI / Ruta | Requisito Asociado | Descripción Técnica |
+| :--- | :--- | :--- | :--- |
+| **POST** | `/dashboard/ingreso` | **R2.19** | Procesa el `StoreHabilitacionRequest` y persiste la habilitación. |
+| **GET** | `/buscar-alumno` | **R2.17.1** | Endpoint JSON. Filtra alumnos por RUT o Nombre para el autocompletado del formulario. |
+| **GET** | `/buscar-profesor-dinf` | **R2.18.1.2 / R2.18.1.3** | Endpoint JSON. Retorna solo profesores con `dinf=true` para roles de Guía y Comisión. |
+| **GET** | `/buscar-profesor-todos` | **R2.18.1.4** | Endpoint JSON. Retorna cualquier profesor registrado para el rol opcional de Co-Guía. |
