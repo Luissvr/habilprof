@@ -50,12 +50,12 @@ class SincronizarDatos extends Command
             $this->sincronizarNotas();
             
             $this->info('Sincronización de datos completada correctamente.');
-            Log::info('TAREA PROGRAMADA: Sincronización completada.');
+            Log::info('TAREA PROGRAMADA: Sincronizacion completada.');
 
         } catch (Exception $e) {
             // R1.8: Si hay un error (desconexión, etc.), lo logueamos y terminamos.
             // La carga de datos esperará 60s para el próximo ciclo.
-            $this->error('¡LA TAREA PROGRAMADA FALLÓ!');
+            $this->error('¡LA TAREA PROGRAMADA FALLOO!');
             $this->error($e->getMessage()); // Muestra el error en la consola
             Log::error('¡ERROR EN TAREA PROGRAMADA! ' . $e->getMessage()); // se guarda en laravel.log
         }
@@ -78,7 +78,7 @@ class SincronizarDatos extends Command
 
             // 3. Si los datos del fantasma son "basura" (no pasan R1), los saltamos.
             if ($validator->fails()) {
-                Log::warning("Sincronización: Alumno externo con RUT {$externo->rut_alumno} tiene datos inválidos.", $validator->errors()->toArray());
+                Log::warning("Sincronización: Alumno externo con RUT {$externo->rut_alumno} tiene datos invalidos.", $validator->errors()->toArray());
                 continue; // Saltar al siguiente alumno
             }
 

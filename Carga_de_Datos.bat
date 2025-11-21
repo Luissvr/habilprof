@@ -11,7 +11,7 @@ php artisan config:clear
 :loop
 Rem Ejecutar el comando artisan para sincronizar datos
 php artisan sincronizar:datos
-echo "Esperando 60 segundos para la próxima sincronización..."
+echo "Esperando 60 segundos para la proxima sincronizacion..."
 
 Rem Ejecutar en 60 segundos, mientras el .bat principal esté en ejecución.
 timeout /t 60 >nul
