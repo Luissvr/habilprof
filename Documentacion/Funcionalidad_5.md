@@ -145,7 +145,7 @@ Si falta alguna variable crítica, se detiene la ejecución y se muestra el erro
 |----------------------------------|---------------------------------------------|
 |R5.1|.env "el archivo en si mismo es R5.1"|
 |R5.2|.env "En las lineas de codigo 1 a 10 se encontrara el bloque con variables maestras"|
-|R5.2.1 - R5.2.8|EnvVal.php "Aqui se puede revisar que las validaciones existan linea 26 - 129"|
+|R5.2.1 - R5.2.8|/app/Services/EnvVal.php "Aqui se puede revisar que las validaciones existan linea 26 - 129"|
 |R5.3|.env "en las lineas 13, 34-47, 62, 65 y 71."|
 |R5.4|.env "en las lineas 12 y 14-16"|
 |R5.5|/config/* "Aqui cada linea que contenga env en cualquier archivo de la carpeta esta ocupando las variables maestras"|
