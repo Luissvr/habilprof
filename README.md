@@ -122,7 +122,9 @@ goto loop
 ```
 ## 4. Documentación del Sistema
 
-Toda la documentación técnica y funcional del proyecto se encuentra en la carpeta `docs/`.
+Toda la documentación técnica y funcional del proyecto se encuentra en la carpeta `Documentacion/`.
 
 * [**Ver Documentación R1 (Carga de Datos)**](Documentacion/Funcionalidad_1.md)
 * [**Ver Documentación R2 (Ingreso de Habilitaciones)**](Documentacion/Funcionalidad_2.md)
+* [**Ver Documentación R4 (Ingreso de Habilitaciones)**](Documentacion/Funcionalidad_4.md)
+* [**Ver Documentación R5 (Ingreso de Habilitaciones)**](Documentacion/Funcionalidad_5.md)
