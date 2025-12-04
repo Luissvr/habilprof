@@ -1,259 +1,244 @@
-<div id="panel-listado" class="tab-panel">
+{{-- Filtros de Listados Varios --}}
 
-    <div class="bg-white rounded-xl shadow-lg p-6 sm:p-10">
-        <div class="mb-6 pb-4 border-b border-gray-200">
-            <h1 class="text-2xl font-bold text-gray-900">Listado de Habilitaciones</h1>
-            <p class="text-sm text-gray-500">Vista completa de todas las habilitaciones</p>
-        </div>
+@if (!empty($mensajeFiltro))
+    <div class="mb-4 px-4 py-3 rounded-lg bg-yellow-100 border border-yellow-300 text-sm text-yellow-800">
+        {{ $mensajeFiltro }}
+    </div>
+@endif
 
-        @php
-            use App\Models\Habilitacion;
+<form method="GET" action="{{ route('dashboard.inicio_listados') }}" class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
 
-            // Entradas desde la URL
-            $tipoListado    = request('tipo_listado');        // "semestral" | "historico" | null
-            $semestreInicio = request('semestre_inicio');     // ej: 2025-1
-            $rutProfesor    = request('rut_profesor');        // rut sin puntos ni guion
-
-            $mensajeFiltro  = null;
-            $habilitaciones = collect();
-
-            // ------------------------------
-            // Validación de tipo_listado (R4.5 / R4.15)
-            // ------------------------------
-            if (!is_null($tipoListado) && $tipoListado !== '') {
-                $valoresPermitidos = ['semestral', 'historico'];
-                if (!in_array($tipoListado, $valoresPermitidos, true)) {
-                    // Valor no válido para tipo_listado
-                    $mensajeFiltro  = 'El tipo de listado seleccionado no es válido.';
-                    $tipoListado    = null; // anulamos para no ejecutar consultas
-                    $habilitaciones = collect();
-                }
-            }
-
-            if ($tipoListado === 'semestral') {
-                // Semestres válidos permitidos (R2.10 acotado)
-                $semestresValidos = ['2025-1', '2025-2', '2026-1', '2026-2'];
-
-                // R4.16.1: semestre_inicio obligatorio
-                if (empty($semestreInicio)) {
-                    $mensajeFiltro = 'Debe ingresar el semestre de inicio.';
-                } elseif (!in_array($semestreInicio, $semestresValidos, true)) {
-                    // No está dentro de los valores permitidos
-                    $mensajeFiltro = 'El semestre ingresado no es válido. Solo se permiten 2025-1, 2025-2, 2026-1 y 2026-2.';
-                } else {
-                    // R4.16.1.1: filtrar por semestre_inicio y ordenar por semestre_inicio
-                    $habilitaciones = Habilitacion::with(['alumno', 'profesores'])
-                        ->where('semestre_inicio', $semestreInicio)
-                        ->orderBy('semestre_inicio')
-                        ->get();
-
-                    if ($habilitaciones->isEmpty()) {
-                        // Mensaje requerido cuando no hay registros
-                        $mensajeFiltro = 'No se encontraron registros para el filtro aplicado.';
-                    }
-                }
-
-            } elseif ($tipoListado === 'historico') {
-
-    // R4.17: rut_profesor obligatorio
-    if (empty($rutProfesor)) {
-        $mensajeFiltro = 'Debe ingresar el RUT del profesor.';
-    } else {
-        // ---------------------------------------
-        // Validación de formato de RUT (R1.4)
-        // ---------------------------------------
-        $regexRut = '/^[0-9]{7,8}[0-9K]$/';
-
-        if (!preg_match($regexRut, $rutProfesor)) {
-            $mensajeFiltro = 'El RUT ingresado no es válido. Debe tener entre 8 y 9 caracteres, sin puntos ni guion, y terminar en un dígito o K.';
-        } else {
-            // Filtro por profesor 
-            $habilitaciones = Habilitacion::with(['alumno', 'profesores'])
-                ->whereHas('profesores', function ($q) use ($rutProfesor) {
-                    $q->where('profesor.rut_profesor', $rutProfesor);
-                })
-                ->get();
-
-            // R4.18: orden por nombre_profesor y semestre_inicio
-            $habilitaciones = $habilitaciones->sortBy(function ($hab) {
-                $prof   = $hab->profesores->first();
-                $nombre = $prof->nombre_profesor ?? '';
-                return $nombre . ' ' . $hab->semestre_inicio;
-            });
-
-            if ($habilitaciones->isEmpty()) {
-                $mensajeFiltro = 'No se encontraron registros para el filtro aplicado.';
-            }
-        }
-    }
-}
-        @endphp
-
-        {{-- Filtros R4.16 / R4.17 --}}
-        <form method="GET" action="{{ url()->current() }}" class="mb-4 flex flex-wrap gap-4 items-end">
-
-            {{-- Tipo de listado --}}
-            <div>
-                <label class="block text-xs font-semibold text-gray-600">Tipo de listado</label>
-                <select name="tipo_listado"
-                        class="mt-1 block w-40 rounded-lg border border-gray-300 p-2 text-sm">
-                    <option value="">Seleccione…</option>
-                    <option value="semestral" {{ $tipoListado === 'semestral' ? 'selected' : '' }}>Semestral</option>
-                    <option value="historico" {{ $tipoListado === 'historico' ? 'selected' : '' }}>Histórico</option>
-                </select>
-            </div>
-
-            <div id="filtro-semestral"
-                 style="display: {{ $tipoListado === 'semestral' ? 'block' : 'none' }};">
-                <label class="block text-xs font-semibold text-gray-600">Semestre de inicio</label>
-                <input type="text" name="semestre_inicio" value="{{ $semestreInicio }}"
-                       placeholder="2025-1 / 2025-2 / 2026-1 / 2026-2"
-                       class="mt-1 block w-40 rounded-lg border border-gray-300 p-2 text-sm">
-            </div>
-
-            <div id="filtro-historico"
-                 style="display: {{ $tipoListado === 'historico' ? 'block' : 'none' }};">
-                <label class="block text-xs font-semibold text-gray-600">RUT Profesor</label>
-                <input type="text" name="rut_profesor" value="{{ $rutProfesor }}"
-                       placeholder="Sin puntos ni guion"
-                       class="mt-1 block w-40 rounded-lg border border-gray-300 p-2 text-sm">
-            </div>
-
-            <div>
-                <button type="submit"
-                        class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg shadow">
-                    Aplicar filtro
-                </button>
-            </div>
-        </form>
-
-        @if ($mensajeFiltro)
-            <div class="mb-4 bg-yellow-50 border border-yellow-300 text-yellow-800 px-4 py-3 rounded text-sm">
-                {{ $mensajeFiltro }}
-            </div>
-        @endif
-
-        <div class="overflow-x-auto">
-            <table class="min-w-full bg-white border-collapse">
-                <thead>
-                    <tr class="bg-gray-100 text-gray-700 uppercase text-sm leading-normal">
-                        <th class="py-3 px-6 text-left border-b border-gray-200">RUT Alumno</th>
-                        <th class="py-3 px-6 text-left border-b border-gray-200">Nombre Alumno</th>
-                        <th class="py-3 px-6 text-left border-b border-gray-200">Tipo de Habilitación</th>
-                        <th class="py-3 px-6 text-left border-b border-gray-200">Título / Descripción</th>
-                        <th class="py-3 px-6 text-left border-b border-gray-200">Período Académico</th>
-                        <th class="py-3 px-6 text-left border-b border-gray-200">Profesor Responsable</th>
-                        <th class="py-3 px-6 text-left border-b border-gray-200">Estado</th>
-                    </tr>
-                </thead>
-                <tbody class="text-gray-600 text-sm font-light">
-
-                    @forelse ($habilitaciones as $hab)
-                        <tr class="border-b border-gray-200 hover:bg-gray-50">
-                            <td class="py-3 px-6 text-left whitespace-nowrap">
-                                {{ $hab->rut_alumno }}
-                            </td>
-
-                            <td class="py-3 px-6 text-left">
-                                {{ $hab->alumno->nombre_alumno ?? 'Sin nombre' }}
-                            </td>
-
-                            <td class="py-3 px-6 text-left">
-                                @switch($hab->t_habilitacion)
-                                    @case('PrIng') Proyecto Ingeniería @break
-                                    @case('PrInv') Proyecto Investigación @break
-                                    @case('PrTut') Práctica Tutelada @break
-                                    @default {{ $hab->t_habilitacion }}
-                                @endswitch
-                            </td>
-
-                            <td class="py-3 px-6 text-left">
-                                {{ $hab->descripcion }}
-                            </td>
-
-                            <td class="py-3 px-6 text-left">
-                                {{ $hab->semestre_inicio }}
-                            </td>
-
-                            <td class="py-3 px-6 text-left">
-                                {{ optional($hab->profesores->first())->nombre_profesor ?? 'No asignado' }}
-                            </td>
-
-                            <td class="py-3 px-6 text-left">
-                                @php
-                                    $estado = is_null($hab->nota) ? 'Pendiente' : 'Finalizado';
-                                @endphp
-                                <span class="px-3 py-1 text-xs font-semibold rounded-full
-                                    {{ $estado == 'Pendiente' ? 'bg-yellow-200 text-yellow-800' : '' }}
-                                    {{ $estado == 'Finalizado' ? 'bg-blue-200 text-blue-800' : '' }}">
-                                    {{ $estado }}
-                                </span>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="7" class="py-4 px-6 text-center text-gray-500">
-                                @if ($tipoListado)
-                                    {{ $mensajeFiltro ?? 'No se encontraron registros para el filtro aplicado.' }}
-                                @else
-                                    Seleccione un tipo de listado y aplique el filtro para ver resultados.
-                                @endif
-                            </td>
-                        </tr>
-                    @endforelse
-
-                </tbody>
-            </table>
-        </div>
+    {{-- Tipo de Listado --}}
+    <div class="md:col-span-1">
+        <label for="tipo_listado" class="block font-semibold mb-1">Tipo de Listado</label>
+        <select id="tipo_listado" name="tipo_listado"
+                class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm">
+            <option value="">Seleccione...</option>
+            <option value="semestral" {{ $tipoListado === 'semestral' ? 'selected' : '' }}>Semestral</option>
+            <option value="historico" {{ $tipoListado === 'historico' ? 'selected' : '' }}>Histórico</option>
+        </select>
     </div>
 
+    {{-- Semestre Inicio (solo Semestral) --}}
+    <div id="campo_semestre" class="md:col-span-1 {{ $tipoListado === 'semestral' ? '' : 'hidden' }}">
+        <label for="semestre_inicio" class="block font-semibold mb-1">Semestre Inicio</label>
+        <input type="text"
+               id="semestre_inicio"
+               name="semestre_inicio"
+               value="{{ old('semestre_inicio', $semestreInicio) }}"
+               placeholder="2025-1"
+               class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm">
+        <p class="mt-1 text-xs text-gray-500">
+            Formato: 2025-1, 2025-2, 2026-1 o 2026-2.
+        </p>
+    </div>
+
+    {{-- RUT Profesor (solo Histórico) --}}
+    <div id="campo_rut" class="md:col-span-1 {{ $tipoListado === 'historico' ? '' : 'hidden' }}">
+        <label for="rut_profesor" class="block font-semibold mb-1">RUT Profesor</label>
+        <input type="text"
+               id="rut_profesor"
+               name="rut_profesor"
+               value="{{ old('rut_profesor', $rutProfesor) }}"
+               minlength="8"
+               maxlength="9"
+               pattern="[0-9]{7,8}[0-9K]"
+               class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
+               placeholder="Ej: 21069322K">
+        <p class="mt-1 text-xs text-gray-500">
+            Sin puntos ni guión, 8–9 caracteres. Ej: 21069322K.
+        </p>
+    </div>
+
+    {{-- Botón --}}
+    <div class="md:col-span-1 flex items-start md:mt-7">
+    <button type="submit"
+            class="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-md shadow-sm text-sm">
+        Aplicar filtros
+    </button>
 </div>
 
+</form>
+
+{{-- ========================= --}}
+{{--   RESULTADOS: SEMESTRAL   --}}
+{{-- ========================= --}}
+@if ($tipoListado === 'semestral')
+
+    {{-- LISTA: Proyectos (PrIng / PrInv) --}}
+    <h2 class="text-lg font-semibold mt-2 mb-2">
+        Proyectos de Ingeniería / Investigación
+    </h2>
+
+    <div class="overflow-x-auto bg-white rounded-lg shadow-sm border border-gray-200">
+        <table class="min-w-full text-sm text-left">
+            <thead class="bg-gray-50 text-xs font-semibold uppercase text-gray-500">
+                <tr>
+                    <th class="px-4 py-2">RUT Alumno</th>
+                    <th class="px-4 py-2">Nombre Alumno</th>
+                    <th class="px-4 py-2">Tipo Hab.</th>
+                    <th class="px-4 py-2">Semestre</th>
+                    <th class="px-4 py-2">Título Proyecto / Investigación</th>
+                    <th class="px-4 py-2">Descripción</th>
+                    <th class="px-4 py-2">Profesor Guía</th>
+                    <th class="px-4 py-2">Profesor Comisión</th>
+                    <th class="px-4 py-2">Profesor Co-guía</th>
+                    <th class="px-4 py-2">Nota</th>
+                    <th class="px-4 py-2">Fecha Nota</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+                @forelse ($listaProyectos as $item)
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-4 py-2 whitespace-nowrap">{{ $item['rut_alumno'] }}</td>
+                        <td class="px-4 py-2">{{ $item['nombre_alumno'] }}</td>
+                        <td class="px-4 py-2 whitespace-nowrap">{{ $item['tipo_habilitacion'] }}</td>
+                        <td class="px-4 py-2 whitespace-nowrap">{{ $item['semestre_inicio'] }}</td>
+                        <td class="px-4 py-2">{{ $item['titulo_proyecto'] }}</td>
+                        <td class="px-4 py-2">{{ $item['descripcion'] }}</td>
+                        <td class="px-4 py-2">{{ $item['profesor_guia'] }}</td>
+                        <td class="px-4 py-2">{{ $item['profesor_comision'] }}</td>
+                        <td class="px-4 py-2">{{ $item['profesor_coguia'] }}</td>
+                        <td class="px-4 py-2 whitespace-nowrap">{{ $item['nota'] }}</td>
+                        <td class="px-4 py-2 whitespace-nowrap">{{ $item['fecha_registro_nota'] }}</td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="11" class="px-4 py-4 text-center text-gray-500">
+                            No se encontraron proyectos para el semestre indicado.
+                        </td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+
+    {{-- LISTA: Prácticas (PrTut) --}}
+    <h2 class="text-lg font-semibold mt-8 mb-2">
+        Prácticas Tuteladas
+    </h2>
+
+    <div class="overflow-x-auto bg-white rounded-lg shadow-sm border border-gray-200">
+        <table class="min-w-full text-sm text-left">
+            <thead class="bg-gray-50 text-xs font-semibold uppercase text-gray-500">
+                <tr>
+                    <th class="px-4 py-2">RUT Alumno</th>
+                    <th class="px-4 py-2">Nombre Alumno</th>
+                    <th class="px-4 py-2">Tipo Hab.</th>
+                    <th class="px-4 py-2">Semestre</th>
+                    <th class="px-4 py-2">Empresa</th>
+                    <th class="px-4 py-2">Supervisor Empresa</th>
+                    <th class="px-4 py-2">Profesor Tutor</th>
+                    <th class="px-4 py-2">Nota</th>
+                    <th class="px-4 py-2">Fecha Nota</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+                @forelse ($listaPracticas as $item)
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-4 py-2 whitespace-nowrap">{{ $item['rut_alumno'] }}</td>
+                        <td class="px-4 py-2">{{ $item['nombre_alumno'] }}</td>
+                        <td class="px-4 py-2 whitespace-nowrap">{{ $item['tipo_habilitacion'] }}</td>
+                        <td class="px-4 py-2 whitespace-nowrap">{{ $item['semestre_inicio'] }}</td>
+                        <td class="px-4 py-2">{{ $item['empresa'] }}</td>
+                        <td class="px-4 py-2">{{ $item['supervisor_empresa'] }}</td>
+                        <td class="px-4 py-2">{{ $item['profesor_tutor'] }}</td>
+                        <td class="px-4 py-2 whitespace-nowrap">{{ $item['nota'] }}</td>
+                        <td class="px-4 py-2 whitespace-nowrap">{{ $item['fecha_registro_nota'] }}</td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="9" class="px-4 py-4 text-center text-gray-500">
+                            No se encontraron prácticas para el semestre indicado.
+                        </td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+
+@endif
+
+{{-- ========================= --}}
+{{--   RESULTADOS: HISTÓRICO   --}}
+{{-- ========================= --}}
+@if ($tipoListado === 'historico')
+
+    <h2 class="text-lg font-semibold mt-2 mb-2">
+        Listado Histórico de Habilitaciones
+    </h2>
+
+    <div class="overflow-x-auto bg-white rounded-lg shadow-sm border border-gray-200">
+        <table class="min-w-full text-sm text-left">
+            <thead class="bg-gray-50 text-xs font-semibold uppercase text-gray-500">
+                <tr>
+                    <th class="px-4 py-2">Profesor</th>
+                    <th class="px-4 py-2">Semestre</th>
+                    <th class="px-4 py-2">RUT Alumno</th>
+                    <th class="px-4 py-2">Nombre Alumno</th>
+                    <th class="px-4 py-2">Tipo Hab.</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+                @forelse ($listaHistorico as $item)
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-4 py-2">{{ $item['nombre_profesor'] }}</td>
+                        <td class="px-4 py-2 whitespace-nowrap">{{ $item['semestre_inicio'] }}</td>
+                        <td class="px-4 py-2 whitespace-nowrap">{{ $item['rut_alumno'] }}</td>
+                        <td class="px-4 py-2">{{ $item['nombre_alumno'] }}</td>
+                        <td class="px-4 py-2 whitespace-nowrap">{{ $item['tipo_habilitacion'] }}</td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="5" class="px-4 py-4 text-center text-gray-500">
+                            No se encontraron registros para el filtro aplicado.
+                        </td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+
+@endif
+
+{{-- ========================= --}}
+{{--   JS: filtros dinámicos   --}}
+{{-- ========================= --}}
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-
-    /* --------------------------
-       1) Mostrar / ocultar filtros
-       -------------------------- */
-    const selectTipo = document.querySelector('#panel-listado select[name="tipo_listado"]');
-    const bloqueSem  = document.getElementById('filtro-semestral');
-    const bloqueHist = document.getElementById('filtro-historico');
+    const selectTipo   = document.getElementById('tipo_listado');
+    const campoSemestre = document.getElementById('campo_semestre');
+    const campoRut      = document.getElementById('campo_rut');
+    const rutInput      = document.getElementById('rut_profesor');
 
     function actualizarFiltros() {
-        if (!selectTipo) return;
+        const tipo = selectTipo.value;
 
-        const v = selectTipo.value;
+        campoSemestre.classList.add('hidden');
+        campoRut.classList.add('hidden');
 
-        if (v === 'semestral') {
-            bloqueSem.style.display  = 'block';
-            bloqueHist.style.display = 'none';
-        } else if (v === 'historico') {
-            bloqueSem.style.display  = 'none';
-            bloqueHist.style.display = 'block';
-        } else {
-            bloqueSem.style.display  = 'none';
-            bloqueHist.style.display = 'none';
+        if (tipo === 'semestral') {
+            campoSemestre.classList.remove('hidden');
+        } else if (tipo === 'historico') {
+            campoRut.classList.remove('hidden');
         }
     }
 
     if (selectTipo) {
-        selectTipo.addEventListener('change', actualizarFiltros);
         actualizarFiltros();
+        selectTipo.addEventListener('change', actualizarFiltros);
     }
 
-    /* --------------------------
-       2) Mantener pestaña Listado
-       -------------------------- */
-    const filtroAplicado = "{{ request('tipo_listado') ? '1' : '0' }}" === "1";
-
-    if (filtroAplicado) {
-        setTimeout(function () {
-            const tabListado = document.querySelector('[data-tab="listado"]');
-            if (tabListado) {
-                tabListado.click();
+    // Limitar RUT profesor: sólo 0-9 y K, máx 9 caracteres
+    if (rutInput) {
+        rutInput.addEventListener('input', function () {
+            let v = this.value.toUpperCase();
+            v = v.replace(/[^0-9K]/g, '');   // solo números y K
+            if (v.length > 9) {
+                v = v.slice(0, 9);
             }
-        }, 0);
+            this.value = v;
+        });
     }
-
 });
 </script>

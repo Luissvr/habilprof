@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\listadoController;
+use App\Http\Controllers\clistado\listadoController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
@@ -16,9 +16,6 @@ Route::get('/', [loginController::class, 'mostrarLogin'])->name('login.mostrar')
 // Validación del login
 Route::post('/login', [loginController::class, 'validarLogin'])->name('login.validar');
 
-// Panel de listado de habilitaciones
-Route::get('/habilitaciones', [listadoController::class, 'dashboard'])
-    ->name('habilitaciones.dashboard');
 
     
 Route::get('/dashboard', function () {
@@ -94,3 +91,10 @@ Route::get('/buscar-profesor-todos', function (Request $request) {
 
 Route::post('/dashboard/ingreso', [ingresoController::class, 'ingreso'])->name('habilitacion.ingreso');
 Route::post('/logout', [loginController::class, 'logout'])->name('logout');
+
+// Testeo nuevo dashboard
+
+
+Route::get('/dashboard-listados', [listadoController::class, 'dashboard'])
+    ->middleware('auth:admin')
+    ->name('dashboard.inicio_listados');

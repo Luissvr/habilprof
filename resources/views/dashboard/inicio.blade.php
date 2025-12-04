@@ -17,8 +17,7 @@
             {{-- PANEL: EDITAR --}}
             @include('dashboard.paneles.editar')
 
-            {{-- PANEL: LISTADO --}}
-            @include('dashboard.paneles.listado')
+
 
             {{-- SUBPANELES (Proyecto y Práctica) --}}
             @include('dashboard.paneles.sub_proyecto')

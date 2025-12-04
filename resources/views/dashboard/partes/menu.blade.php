@@ -16,13 +16,12 @@
                 <span class="font-medium text-lg">Actualizar / Eliminar</span>
             </button>
 
-            {{-- BOTÓN LISTADO --}}
-            <button onclick="mostrarPanel('panel-listado', this)" 
-                class="tab-boton flex items-center justify-center space-x-3 py-8 text-white">
-                <ion-icon name="document-text-outline" class="text-2xl"></ion-icon>
-                <span class="font-medium text-lg">Listados Varios</span>
-            </button>
-
+    {{-- BOTÓN LISTADO – AHORA LLEVA A OTRO DASHBOARD --}}
+    <a href="{{ route('dashboard.inicio_listados') }}"
+        class="tab-boton flex items-center justify-center space-x-3 py-8 text-white">
+        <ion-icon name="document-text-outline" class="text-2xl"></ion-icon>
+        <span class="font-medium text-lg">Listados Varios</span>
+    </a>
         </div>
     </div>
 </div>
